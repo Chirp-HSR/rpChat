@@ -1,0 +1,31 @@
+syntax = "proto3";
+
+option java_multiple_files = true;
+option java_package = "rpChat";
+option java_outer_classname = "ChatProto";
+
+package rpChat;
+
+service Chat {
+  rpc SignUp (SignUpReq) returns (SignUpResp) {}
+  rpc Join (stream ChatReq) returns (stream ChatResp) {}
+}
+
+message SignUpReq {
+  string userName = 1; 
+}
+
+message SignUpResp {
+  int32 sessionId = 1;
+  string welcomeMsg = 2;
+}
+
+message ChatReq {
+  int32 sessionId = 1;
+  string content = 2;
+}
+
+message ChatResp {
+  string sender = 1;
+  string content = 2;
+}
