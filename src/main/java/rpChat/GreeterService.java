@@ -9,7 +9,6 @@ import io.grpc.Status;
 import io.grpc.StatusRuntimeException;
 import io.grpc.stub.StreamObserver;
 import rpChat.GreeterGrpc.Greeter;
-import rpChat.GreeterReq.Language;
 
 public class GreeterService implements Greeter {
 
@@ -23,10 +22,8 @@ public class GreeterService implements Greeter {
 		} else if(name.length() > 10){
 			throw new IOError(new IOException("Too much data!"));
 		} else {
-			String salute = request.getLanguage() == Language.ENGLISH ? "Hi " : "Hallo "; 
-			
 			GreeterResp resp = GreeterResp.newBuilder()
-					.setGreetings(salute + name + "!")
+					.setWelcomeMsg("Hi " + name + "!")
 					.build();
 			responseObserver.onNext(resp);
 			responseObserver.onCompleted();

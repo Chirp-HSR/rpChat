@@ -12,14 +12,8 @@ service Greeter {
 
 message GreeterReq {
   string userName = 1;
-  
-  enum Language {
-    ENGLISH = 0;
-    GERMAN = 1;
-  }
-  Language language = 2;
 }
 
 message GreeterResp {
-  string greetings = 1;
+  string welcomeMsg = 1;
 }

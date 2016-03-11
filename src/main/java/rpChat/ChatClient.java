@@ -26,7 +26,7 @@ public class ChatClient {
 			public void onNext(SignUpResp resp) {
 				System.out.println(resp.getWelcomeMsg());
 
-				joinChatSession(chat, resp.getSessionId());
+				//TODO: join chat (ex 5)
 
 				keepRunning = false;
 			}
@@ -43,30 +43,5 @@ public class ChatClient {
 		while (keepRunning) {
 			Thread.sleep(1000);
 		}
-	}
-
-	static void joinChatSession(Chat chat, int sessionId) {
-		StreamObserver<ChatReq> chatReqObserver = chat.join(new StreamObserver<ChatResp>() {
-			@Override
-			public void onNext(ChatResp value) {
-				System.out.println(value);
-			}
-
-			@Override
-			public void onError(Throwable t) {}
-
-			@Override
-			public void onCompleted() {}
-		});
-
-		Optional<String> msg;
-		while ((msg = Utils.readLine()).isPresent()) {
-			ChatReq chatReq = ChatReq.newBuilder()
-					.setSessionId(sessionId)
-					.setContent(msg.get())
-					.build();
-			chatReqObserver.onNext(chatReq);
-		}
-		chatReqObserver.onCompleted();
 	}
 }

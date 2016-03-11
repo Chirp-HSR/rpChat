@@ -1,17 +1,13 @@
 package rpChat;
 
-import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.concurrent.atomic.AtomicInteger;
 
 import io.grpc.ManagedChannel;
 import io.grpc.ManagedChannelBuilder;
 import io.grpc.Server;
 import io.grpc.ServerBuilder;
-import io.grpc.Status;
-import io.grpc.StatusRuntimeException;
 import io.grpc.stub.StreamObserver;
 import rpChat.ChatGrpc.Chat;
 import rpChat.GreeterGrpc.Greeter;
@@ -37,89 +33,27 @@ public class ChatService implements Chat {
 	@Override
 	public void signUp(SignUpReq request, StreamObserver<SignUpResp> responseObserver) {
 		System.out.println("> received: " + request);
-		String username = request.getUserName();
-
-		GreeterReq greetReq = GreeterReq.newBuilder()
-				.setUserName(username)
-				.build();
-
-		greeter.welcomeMessage(greetReq, new StreamObserver<GreeterResp>() {
-			@Override
-			public void onNext(GreeterResp greetResp) {
-				int sessionId = createSession(username);
-
-				SignUpResp signUpResp = SignUpResp.newBuilder()
-						.setWelcomeMsg(greetResp.getGreetings())
-						.setSessionId(sessionId)
-						.build();
-
-				responseObserver.onNext(signUpResp);
-				responseObserver.onCompleted();
-			}
-
-			@Override
-			public void onError(Throwable t) {
-				Status status = ((StatusRuntimeException) t).getStatus();
-				if (status == Status.UNKNOWN) {
-					responseObserver.onError(new StatusRuntimeException(Status.INVALID_ARGUMENT));
-				} else if (status == Status.UNAVAILABLE) {
-					System.out.println("> Greeting Service not available!");
-					responseObserver.onError(new StatusRuntimeException(Status.INTERNAL));
-				} else {
-					responseObserver.onError(t);
-				}
-			}
-
-			@Override
-			public void onCompleted() {}
-		});
-	}
-
-	private final ChatRouter router = new ChatRouter();
-
-	class ChatRouter {
-
-		List<StreamObserver<ChatResp>> respObservers = new CopyOnWriteArrayList<>();
-
-		public void registerResponseObserver(StreamObserver<ChatResp> responseObserver) {
-			respObservers.add(responseObserver);
-		}
-
-		public void deregister(StreamObserver<ChatResp> responseObserver) {
-			respObservers.remove(responseObserver);
-		}
-
-		public void publish(ChatReq req) {
-			respObservers.forEach(respObs -> {
-				String sender = userNamePerSessionId.get(req.getSessionId());
-				respObs.onNext(ChatResp.newBuilder()
-						.setSender(sender)
-						.setContent(req.getContent())
-						.build());
-			});
-		}
-
+		// TODO
 	}
 
 	@Override
 	public StreamObserver<ChatReq> join(StreamObserver<ChatResp> responseObserver) {
-		router.registerResponseObserver(responseObserver);
+		// TODO
 		return new StreamObserver<ChatReq>() {
 			@Override
-			public void onNext(ChatReq req) {
-				router.publish(req);
-			}
-
-			@Override
 			public void onCompleted() {
-				router.deregister(responseObserver);
+				// TODO Auto-generated method stub
 			}
 
 			@Override
 			public void onError(Throwable t) {
-				router.deregister(responseObserver);
+				// TODO Auto-generated method stub
 			}
-		};
+
+			@Override
+			public void onNext(ChatReq value) {
+				// TODO Auto-generated method stub
+			}};
 	}
 
 	public static void main(String[] args) throws Exception {
