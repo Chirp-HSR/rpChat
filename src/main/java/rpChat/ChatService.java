@@ -11,6 +11,7 @@ import io.grpc.ManagedChannelBuilder;
 import io.grpc.Server;
 import io.grpc.ServerBuilder;
 import io.grpc.Status;
+import io.grpc.Status.Code;
 import io.grpc.StatusRuntimeException;
 import io.grpc.stub.StreamObserver;
 import rpChat.ChatGrpc.Chat;
@@ -60,9 +61,9 @@ public class ChatService implements Chat {
 			@Override
 			public void onError(Throwable t) {
 				Status status = ((StatusRuntimeException) t).getStatus();
-				if (status == Status.UNKNOWN) {
+				if (hasSameStatusCode(status, Status.UNKNOWN)) {
 					responseObserver.onError(new StatusRuntimeException(Status.INVALID_ARGUMENT));
-				} else if (status == Status.UNAVAILABLE) {
+				} else if (hasSameStatusCode(status, Status.UNAVAILABLE)) {
 					System.out.println("> Greeting Service not available!");
 					responseObserver.onError(new StatusRuntimeException(Status.INTERNAL));
 				} else {
@@ -73,6 +74,15 @@ public class ChatService implements Chat {
 			@Override
 			public void onCompleted() {}
 		});
+	}
+	
+	private static boolean hasSameStatusCode(Status status1, Status status2) {
+		if (status1 == null || status2 == null) {
+			return false;
+		}
+		Code statusCode1 = status1.getCode();
+		Code statusCode2 = status2.getCode();
+		return statusCode1 == statusCode2;
 	}
 
 	private final ChatRouter router = new ChatRouter();
